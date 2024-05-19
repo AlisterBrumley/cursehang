@@ -3,7 +3,8 @@
 #include <strings.h>
 
 int main(void) {
-	char line = '-';
+	char word[] = "twice";
+	int wLen = strlen(word);
 	// int lineInt = 196;
 	// int wLen = strlen(word);
 	// DO NOT WRITE PAST 23, 79
@@ -20,6 +21,13 @@ int main(void) {
 	hline(ACS_HLINE, 3);
 	mvaddch(13, 25, ACS_BTEE);
 	hline(ACS_HLINE, 25);
+
+	move(15, 20);
+	for(int i = 0; i < wLen; i++) {
+		addch(95);
+		addch(32);
+	}
+
 	getch();
 	clear();
 	mvaddstr(0, 0, "exiting");
