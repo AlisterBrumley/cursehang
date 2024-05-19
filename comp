@@ -1,3 +1,0 @@
-#! /bin/bash
-
-clang cursehang.c -o ch -lncurses
