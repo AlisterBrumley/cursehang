@@ -2,8 +2,10 @@
 #include <ncurses.h>
 #include <strings.h>
 
-int main(void) {
+int main(void)
+{
 	char word[] = "twice";
+	char input[15];
 	int wLen = strlen(word);
 	// int lineInt = 196;
 	// int wLen = strlen(word);
@@ -23,16 +25,40 @@ int main(void) {
 	hline(ACS_HLINE, 25);
 
 	move(15, 20);
-	for(int i = 0; i < wLen; i++) {
+	for (int i = 0; i < wLen; i++)
+	{
 		addch(95);
 		addch(32);
 	}
 
-	getch();
+	getstr(input);
+	int inLen = strlen(input);
+	if (strcmp(word, input) == 0)
+	{
+		clear();
+		mvaddstr(0, 0, "You Win!");
+		getch();
+		endwin();
+		return 0;
+	}
+
+	for (int i = 0; i < inLen; i++)
+	{
+		for (int j = 0; j < wLen; j++)
+		{
+			if (input[i] == word[j])
+			{
+				// identifys letters correctly
+			}
+		}
+		// might have to nested loop to search
+		// check cs50 stuff, i think theres a solution there
+	}
+
 	clear();
 	mvaddstr(0, 0, "exiting");
 	getch();
-	
+
 	endwin();
 	return 0;
 }
