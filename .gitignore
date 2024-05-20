@@ -1,3 +1,4 @@
 ch
-comp
+# comp
 .DS_Store
+*.code-workspace
