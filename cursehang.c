@@ -1,20 +1,26 @@
 #include <stdio.h>
 #include <ncurses.h>
 #include <strings.h>
+#include <stdbool.h>
+#include "cursehang.h"
+
+// DO NOT WRITE PAST 23, 79
+// TO BE COMPILED WITH -lncurses
 
 int main(void)
 {
+	// TODO FIND DICTIONARY, PULL RANDOM WORD FROM DICT AND SET
 	char word[] = "twice";
-	char input[15];
 	int wLen = strlen(word);
-	// int lineInt = 196;
-	// int wLen = strlen(word);
-	// DO NOT WRITE PAST 23, 79
+	bool win = false;
+
+	// INIT WINDOW
 	initscr();
 	cbreak();
 	noecho();
 
-	// printw("lmao");
+	// TODO; FUNCTION THIS
+	// DRAW GALLOWS
 	move(2, 25);
 	addch(ACS_ULCORNER);
 	hline(ACS_HLINE, 20);
@@ -24,40 +30,60 @@ int main(void)
 	mvaddch(13, 25, ACS_BTEE);
 	hline(ACS_HLINE, 25);
 
+	// DISPLAY WORD LENGTH HINT
 	move(15, 20);
+	addstr("WORD:\t");
 	for (int i = 0; i < wLen; i++)
 	{
-		addch(95);
-		addch(32);
+		// addch(95);
+		// addch(32);
+		addstr("_ ");
 	}
 
-	getstr(input);
-	int inLen = strlen(input);
-	if (strcmp(word, input) == 0)
-	{
-		clear();
-		mvaddstr(0, 0, "You Win!");
-		getch();
-		endwin();
-		return 0;
-	}
+	// SETTING POS FOR ANSWER
+	int yPos, xPos;
+	move(16, 20);
+	addstr("GUESS:\t");
+	getyx(stdscr, yPos, xPos);
 
-	for (int i = 0; i < inLen; i++)
+	do
 	{
-		for (int j = 0; j < wLen; j++)
+		move(yPos, xPos);
+		char* answer = turn();
+		int ansLen = strlen(answer);
+
+		// mvprintw(23, 79, "%d", ansLen); PRINTS LENGTH OF ANSWER, TO DELETE
+		// getch();
+		if (ansLen == wLen && strcmp(word, answer) == 0)
 		{
-			if (input[i] == word[j])
-			{
-				// identifys letters correctly
-			}
+			win = true;
+			break;
 		}
-		// might have to nested loop to search
-		// check cs50 stuff, i think theres a solution there
-	}
+		else if (ansLen > 1)
+		{
+			move(yPos, xPos);
+			addstr("wrong!              ");
+			getch();
+			move(yPos, xPos);
+			for (int i = 0; i < 20; i++)
+			{
+				delch();
+			}
+			continue;
+		} else {
+			// lette check function goes here!
+		}
+		move(yPos, xPos);
+		addstr("shouldnt be here!");
+	} while (win == false);
 
 	clear();
-	mvaddstr(0, 0, "exiting");
+	mvaddstr(0, 0, "You Win!");
 	getch();
+
+	// clear();
+	// mvaddstr(0, 0, "exiting");
+	// getch();
 
 	endwin();
 	return 0;
