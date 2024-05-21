@@ -2,6 +2,8 @@
 #include <ncurses.h>
 #include <strings.h>
 #include <stdbool.h>
+#include <stdlib.h>
+#include <ctype.h>
 #include "cursehang.h"
 
 // DO NOT WRITE PAST 23, 79
@@ -10,6 +12,9 @@
 int main(void)
 {
 	// TODO FIND DICTIONARY, PULL RANDOM WORD FROM DICT AND SET
+
+	// VARIABLE SETTNG
+	int maxLength = 20;
 	char word[] = "twice";
 	int wLen = strlen(word);
 	bool win = false;
@@ -46,35 +51,36 @@ int main(void)
 	addstr("GUESS:\t");
 	getyx(stdscr, yPos, xPos);
 
+	// game loop
 	do
 	{
 		move(yPos, xPos);
-		char* answer = turn();
-		int ansLen = strlen(answer);
+		char *guess = turn(maxLength);
+		int guessLen = strlen(guess);
 
-		// mvprintw(23, 79, "%d", ansLen); PRINTS LENGTH OF ANSWER, TO DELETE
+		// mvprintw(23, 79, "%d", guessLen); PRINTS LENGTH OF ANSWER, TO DELETE
 		// getch();
-		if (ansLen == wLen && strcmp(word, answer) == 0)
+		if (guessLen == wLen && strcmp(word, guess) == 0)
 		{
 			win = true;
+			free(guess);
 			break;
 		}
-		else if (ansLen > 1)
+		else if (guessLen > 1)
 		{
-			move(yPos, xPos);
-			addstr("wrong!              ");
-			getch();
-			move(yPos, xPos);
-			for (int i = 0; i < 20; i++)
-			{
-				delch();
-			}
+			wrong_word(yPos, xPos);
+			free(guess);
+			clear_entry(yPos, xPos, maxLength);
 			continue;
-		} else {
-			// lette check function goes here!
 		}
-		move(yPos, xPos);
-		addstr("shouldnt be here!");
+		else
+		{
+			letter_check(yPos, xPos, guess, word, wLen);
+			free(guess);
+			clear_entry(yPos, xPos, maxLength);
+			continue;
+		}
+		// free(guess);
 	} while (win == false);
 
 	clear();
@@ -87,4 +93,82 @@ int main(void)
 
 	endwin();
 	return 0;
+}
+
+// turn input and update loop
+char *turn(wordLength)
+{
+	// inputs char, if valid add to arr
+	char input;
+	char *inputArr = malloc(wordLength);
+
+	for (int i = 0; i < wordLength; i++)
+	{
+		input = getch();
+		if (isalpha(input) == 0)
+		{
+			// if non-letter, break to submit input
+			break;
+		}
+		else if (isupper(input) != 0)
+		{
+			// to lower
+			input = input + 32;
+		}
+		// else if (input < 65 || input > 90 || input < 97 || input > 122)
+		// {
+		//     break;
+		// }
+		inputArr[i] = input;
+		addch(input);
+	}
+
+	return inputArr;
+}
+
+// runs when incorrect word is submitted and clears
+void wrong_word(yPos, xPos)
+{
+	char wrong[] = "wrong!              ";
+
+	move(yPos, xPos);
+	addstr(wrong);
+	getch();
+}
+
+// TO DO'ING
+// checks letters
+void letter_check(int yPos, int xPos, char *guess, char *word, int wordLen)
+{
+	int inLen = strlen(guess);
+	for (int i = 0; i < inLen; i++)
+	{
+		for (int j = 0; j < wordLen; j++)
+		{
+			if (guess[i] == word[j])
+			{
+				// identifys letters correctly
+				move(yPos, (xPos + 2));
+				addstr("matches");
+				getch();
+			}
+			else
+			{
+				move(yPos, (xPos + 2));
+				addstr("no match");
+				getch();
+			}
+		}
+		// might have to nested loop to search
+		// check cs50 stuff, i think theres a solution there
+	}
+}
+
+void clear_entry(yPos, xPos, maximumLength)
+{
+	move(yPos, xPos);
+	for (int i = 0; i < maximumLength; i++)
+	{
+		delch();
+	}
 }
