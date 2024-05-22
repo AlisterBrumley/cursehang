@@ -15,7 +15,7 @@ int main(void)
 
 	// VARIABLE SETTNG
 	int maxLength = 20;
-	char word[] = "twice";
+	char word[] = "twicet";
 	int wLen = strlen(word);
 	bool win = false;
 
@@ -38,23 +38,23 @@ int main(void)
 	// DISPLAY WORD LENGTH HINT
 	move(15, 20);
 	addstr("WORD:\t");
+	int wordYpos, wordXpos;
+	getyx(stdscr, wordYpos, wordXpos);
 	for (int i = 0; i < wLen; i++)
 	{
-		// addch(95);
-		// addch(32);
 		addstr("_ ");
 	}
 
 	// SETTING POS FOR ANSWER
-	int yPos, xPos;
+	int guessYpos, guessXpos;
 	move(16, 20);
 	addstr("GUESS:\t");
-	getyx(stdscr, yPos, xPos);
+	getyx(stdscr, guessYpos, guessXpos);
 
 	// game loop
 	do
 	{
-		move(yPos, xPos);
+		move(guessYpos, guessXpos);
 		char *guess = turn(maxLength);
 		int guessLen = strlen(guess);
 
@@ -68,16 +68,16 @@ int main(void)
 		}
 		else if (guessLen > 1)
 		{
-			wrong_word(yPos, xPos);
+			wrong_word(guessYpos, guessXpos);
 			free(guess);
-			clear_entry(yPos, xPos, maxLength);
+			clear_entry(guessYpos, guessXpos, maxLength);
 			continue;
 		}
 		else
 		{
-			letter_check(yPos, xPos, guess, word, wLen);
+			letter_check(wordYpos, wordXpos, guess, word, wLen);
 			free(guess);
-			clear_entry(yPos, xPos, maxLength);
+			clear_entry(guessYpos, guessXpos, maxLength);
 			continue;
 		}
 		// free(guess);
@@ -127,46 +127,37 @@ char *turn(wordLength)
 }
 
 // runs when incorrect word is submitted and clears
-void wrong_word(yPos, xPos)
+void wrong_word(guessYpos, guessXpos)
 {
 	char wrong[] = "wrong!              ";
 
-	move(yPos, xPos);
+	move(guessYpos, guessXpos);
 	addstr(wrong);
 	getch();
 }
 
 // TO DO'ING
 // checks letters
-void letter_check(int yPos, int xPos, char *guess, char *word, int wordLen)
+void letter_check(int wordYpos, int wordXpos, char *guess, char *word, int wordLen)
 {
-	int inLen = strlen(guess);
-	for (int i = 0; i < inLen; i++)
+	for (int j = 0; j < wordLen; j++)
 	{
-		for (int j = 0; j < wordLen; j++)
+		// figures position of letter in hint
+		int letterXpos = wordXpos + j * 2;
+
+		// adds letter in hint
+		if (*guess == word[j])
 		{
-			if (guess[i] == word[j])
-			{
-				// identifys letters correctly
-				move(yPos, (xPos + 2));
-				addstr("matches");
-				getch();
-			}
-			else
-			{
-				move(yPos, (xPos + 2));
-				addstr("no match");
-				getch();
-			}
+			move(wordYpos, letterXpos);
+			addch(*guess);
 		}
-		// might have to nested loop to search
-		// check cs50 stuff, i think theres a solution there
 	}
 }
 
-void clear_entry(yPos, xPos, maximumLength)
+// clears entry space
+void clear_entry(guessYpos, guessXpos, maximumLength)
 {
-	move(yPos, xPos);
+	move(guessYpos, guessXpos);
 	for (int i = 0; i < maximumLength; i++)
 	{
 		delch();
