@@ -20,21 +20,9 @@ int main(void)
 	int correct = 0;
 	bool win = false;
 
-	// INIT WINDOW
-	initscr();
-	cbreak();
-	noecho();
-
-	// TODO; FUNCTION THIS
-	// DRAW GALLOWS
-	move(2, 25);
-	addch(ACS_ULCORNER);
-	hline(ACS_HLINE, 20);
-	mvvline(3, 25, ACS_VLINE, 10);
-	move(13, 22);
-	hline(ACS_HLINE, 3);
-	mvaddch(13, 25, ACS_BTEE);
-	hline(ACS_HLINE, 25);
+	// draw base game setup
+	initialize();
+	draw_gallows();
 
 	// DISPLAY WORD LENGTH HINT
 	move(15, 20);
@@ -165,4 +153,23 @@ void clear_entry(guessYpos, guessXpos, maximumLength)
 	{
 		delch();
 	}
+}
+
+void initialize(void)
+{
+	initscr();
+	cbreak();
+	noecho();
+}
+
+void draw_gallows()
+{
+	move(2, 25);
+	addch(ACS_ULCORNER);
+	hline(ACS_HLINE, 20);
+	mvvline(3, 25, ACS_VLINE, 10);
+	move(13, 22);
+	hline(ACS_HLINE, 3);
+	mvaddch(13, 25, ACS_BTEE);
+	hline(ACS_HLINE, 25);
 }
