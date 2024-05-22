@@ -9,6 +9,12 @@
 // DO NOT WRITE PAST 23, 79
 // TO BE COMPILED WITH -lncurses
 
+struct pos
+{
+	int y;
+	int x;
+};
+
 int main(void)
 {
 	// TODO FIND DICTIONARY, PULL RANDOM WORD FROM DICT AND SET
@@ -27,23 +33,24 @@ int main(void)
 	// DISPLAY WORD LENGTH HINT
 	move(15, 20);
 	addstr("WORD:\t");
-	int wordYpos, wordXpos;
-	getyx(stdscr, wordYpos, wordXpos);
+	struct pos wPos;
+	getyx(stdscr, wPos.y, wPos.x);
 	for (int i = 0; i < wLen; i++)
 	{
 		addstr("_ ");
 	}
 
 	// SETTING POS FOR ANSWER
-	int guessYpos, guessXpos;
+	// int gPos.y, gPos.x;
 	move(16, 20);
 	addstr("GUESS:\t");
-	getyx(stdscr, guessYpos, guessXpos);
+	struct pos gPos;
+	getyx(stdscr, gPos.y, gPos.x);
 
 	// game loop
 	do
 	{
-		move(guessYpos, guessXpos);
+		move(gPos.y, gPos.x);
 		char *guess = turn(maxLength);
 		int guessLen = strlen(guess);
 
@@ -55,13 +62,13 @@ int main(void)
 		}
 		else if (guessLen > 1)
 		{
-			wrong_word(guessYpos, guessXpos);
-			clear_entry(guessYpos, guessXpos, maxLength);
+			wrong_word(gPos);
+			clear_entry(gPos, maxLength);
 		}
 		else
 		{
-			correct += letter_check(wordYpos, wordXpos, guess, word, wLen);
-			clear_entry(guessYpos, guessXpos, maxLength);
+			correct += letter_check(wPos, guess, word, wLen);
+			clear_entry(gPos, maxLength);
 
 			// TODO
 			// FUNCTION THIS
@@ -112,31 +119,31 @@ char *turn(wordLength)
 }
 
 // runs when incorrect word is submitted and clears
-void wrong_word(guessYpos, guessXpos)
+void wrong_word(struct pos gPos)
 {
 	char wrong[] = "wrong!              ";
 
-	move(guessYpos, guessXpos);
+	move(gPos.y, gPos.x);
 	addstr(wrong);
 	refresh();
-	napms(5000);
+	napms(1000);
 	// NEED TO HALT INPUT FOR NAP!
 }
 
 // TO DO'ING
 // checks letters
-int letter_check(int wordYpos, int wordXpos, char *guess, char *word, int wordLen)
+int letter_check(struct pos wPos, char *guess, char *word, int wordLen)
 {
 	int letterMatch = 0;
 	for (int j = 0; j < wordLen; j++)
 	{
 		// figures position of letter in hint
-		int letterXpos = wordXpos + j * 2;
+		int letterXpos = wPos.x + j * 2;
 
 		// adds letter in hint
 		if (*guess == word[j])
 		{
-			move(wordYpos, letterXpos);
+			move(wPos.y, letterXpos);
 			addch(*guess);
 			letterMatch++;
 		}
@@ -146,9 +153,9 @@ int letter_check(int wordYpos, int wordXpos, char *guess, char *word, int wordLe
 }
 
 // clears entry space
-void clear_entry(guessYpos, guessXpos, maximumLength)
+void clear_entry(struct pos gPos, int maximumLength)
 {
-	move(guessYpos, guessXpos);
+	move(gPos.y, gPos.x);
 	for (int i = 0; i < maximumLength; i++)
 	{
 		delch();
