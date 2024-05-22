@@ -11,3 +11,4 @@ int letter_check();
 void clear_entry();
 void initialize();
 void draw_gallows();
+char *word_picker();
