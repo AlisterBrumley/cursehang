@@ -7,5 +7,5 @@
 
 char *turn();
 void wrong_word();
-void letter_check();
+int letter_check();
 void clear_entry();

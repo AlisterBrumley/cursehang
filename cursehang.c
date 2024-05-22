@@ -17,6 +17,7 @@ int main(void)
 	int maxLength = 20;
 	char word[] = "twicet";
 	int wLen = strlen(word);
+	int correct = 0;
 	bool win = false;
 
 	// INIT WINDOW
@@ -63,33 +64,31 @@ int main(void)
 		if (guessLen == wLen && strcmp(word, guess) == 0)
 		{
 			win = true;
-			free(guess);
-			break;
 		}
 		else if (guessLen > 1)
 		{
 			wrong_word(guessYpos, guessXpos);
-			free(guess);
 			clear_entry(guessYpos, guessXpos, maxLength);
-			continue;
 		}
 		else
 		{
-			letter_check(wordYpos, wordXpos, guess, word, wLen);
-			free(guess);
+			correct += letter_check(wordYpos, wordXpos, guess, word, wLen);
 			clear_entry(guessYpos, guessXpos, maxLength);
-			continue;
+
+			// TODO
+			// FUNCTION THIS
+			if (correct == wLen)
+			{
+				win = true;
+			}
 		}
-		// free(guess);
+
+		free(guess);
 	} while (win == false);
 
 	clear();
 	mvaddstr(0, 0, "You Win!");
 	getch();
-
-	// clear();
-	// mvaddstr(0, 0, "exiting");
-	// getch();
 
 	endwin();
 	return 0;
@@ -105,6 +104,8 @@ char *turn(wordLength)
 	for (int i = 0; i < wordLength; i++)
 	{
 		input = getch();
+		// TODO
+		// NEED TO ADD BACKSPACES
 		if (isalpha(input) == 0)
 		{
 			// if non-letter, break to submit input
@@ -115,10 +116,6 @@ char *turn(wordLength)
 			// to lower
 			input = input + 32;
 		}
-		// else if (input < 65 || input > 90 || input < 97 || input > 122)
-		// {
-		//     break;
-		// }
 		inputArr[i] = input;
 		addch(input);
 	}
@@ -133,13 +130,16 @@ void wrong_word(guessYpos, guessXpos)
 
 	move(guessYpos, guessXpos);
 	addstr(wrong);
-	getch();
+	refresh();
+	napms(5000);
+	// NEED TO HALT INPUT FOR NAP!
 }
 
 // TO DO'ING
 // checks letters
-void letter_check(int wordYpos, int wordXpos, char *guess, char *word, int wordLen)
+int letter_check(int wordYpos, int wordXpos, char *guess, char *word, int wordLen)
 {
+	int letterMatch = 0;
 	for (int j = 0; j < wordLen; j++)
 	{
 		// figures position of letter in hint
@@ -150,8 +150,11 @@ void letter_check(int wordYpos, int wordXpos, char *guess, char *word, int wordL
 		{
 			move(wordYpos, letterXpos);
 			addch(*guess);
+			letterMatch++;
 		}
 	}
+
+	return letterMatch;
 }
 
 // clears entry space
