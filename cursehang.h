@@ -5,10 +5,11 @@
 // #include <stdlib.h>
 // #include <ctype.h>
 
+void initialize();
+void draw_gallows();
 char *turn();
 void response();
 int letter_check();
 void clear_entry();
-void initialize();
-void draw_gallows();
+void backspace();
 char *word_picker();

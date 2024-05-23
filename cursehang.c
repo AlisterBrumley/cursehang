@@ -80,6 +80,7 @@ int main(void)
 	do
 	{
 		move(gPos.y, gPos.x);		   // setting pos
+		refresh();
 		char *guess = turn(maxLength); // turn input
 		int gLen = strlen(guess);
 		int gIndex = guess[0] - 97; // for inputting to alreadyGuessed array
@@ -118,6 +119,7 @@ int main(void)
 		}
 
 		free(guess);
+		guess = NULL;
 	} while (win == false);
 
 	clear();
@@ -128,30 +130,69 @@ int main(void)
 	return 0;
 }
 
+void initialize(void)
+{
+	initscr();
+	cbreak();
+	noecho();
+}
+
+void draw_gallows()
+{
+	// top bar
+	move(2, 25);
+	addch(ACS_ULCORNER);
+	hline(ACS_HLINE, 20);
+	// pillar
+	move(3, 25);
+	vline(ACS_VLINE, 10);
+	// floor
+	move(13, 22);
+	hline(ACS_HLINE, 3);
+	move(13, 25);
+	addch(ACS_BTEE);
+	hline(ACS_HLINE, 25);
+}
+
 // turn input and update loop
-char *turn(wordLength)
+char *turn(int wordLength)
 {
 	// inputs char, if valid add to arr
 	char input;
+	int inLength = 0;
 	char *inputArr = malloc(wordLength);
+	int i = 0;
 
-	for (int i = 0; i < wordLength; i++)
+	while (inLength < wordLength)
 	{
 		input = getch();
 		// TODO
 		// NEED TO ADD BACKSPACES
-		if (isalpha(input) == 0)
+		if (i > 0 && (input == 13 || input == 10))
 		{
-			// if non-letter, break to submit input
+			// if enter, break to submit input
 			break;
+		}
+		else if (i > 0 && (input == 8 || input == 127))
+		{
+			backspace();
+			i--;
+			inputArr[i] = 0;
+			continue;
+		}
+		else if (isalpha(input) == 0)
+		{
+			continue;
 		}
 		else if (isupper(input) != 0)
 		{
 			// to lower
-			input = input + 32;
+			input += 32;
 		}
 		inputArr[i] = input;
+		inLength = strlen(inputArr);
 		addch(input);
+		i++;
 	}
 
 	return inputArr;
@@ -199,28 +240,11 @@ void clear_entry(struct pos gPos, int maximumLength)
 	}
 }
 
-void initialize(void)
+void backspace()
 {
-	initscr();
-	cbreak();
-	noecho();
-}
-
-void draw_gallows()
-{
-	// top bar
-	move(2, 25);
-	addch(ACS_ULCORNER);
-	hline(ACS_HLINE, 20);
-	// pillar
-	move(3, 25);
-	vline(ACS_VLINE, 10);
-	// floor
-	move(13, 22);
-	hline(ACS_HLINE, 3);
-	move(13, 25);
-	addch(ACS_BTEE);
-	hline(ACS_HLINE, 25);
+	int y, x;
+	getyx(stdscr, y, x);
+	mvdelch(y, (x - 1));
 }
 
 char *word_picker()
