@@ -172,13 +172,18 @@ void initialize(void)
 
 void draw_gallows()
 {
+	// top bar
 	move(2, 25);
 	addch(ACS_ULCORNER);
 	hline(ACS_HLINE, 20);
-	mvvline(3, 25, ACS_VLINE, 10);
+	// pillar
+	move(3,25);
+	vline(ACS_VLINE, 10);
+	// floor
 	move(13, 22);
 	hline(ACS_HLINE, 3);
-	mvaddch(13, 25, ACS_BTEE);
+	move(13, 25);
+	addch(ACS_BTEE);
 	hline(ACS_HLINE, 25);
 }
 
