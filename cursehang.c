@@ -79,7 +79,7 @@ int main(void)
 	// game loop
 	do
 	{
-		move(gPos.y, gPos.x);		   // setting pos
+		move(gPos.y, gPos.x); // setting pos
 		refresh();
 		char *guess = turn(maxLength); // turn input
 		int gLen = strlen(guess);
@@ -160,17 +160,15 @@ char *turn(int wordLength)
 	// inputs char, if valid add to arr
 	char input;
 	int inLength = 0;
-	char *inputArr = malloc(wordLength);
+	char *inputArr = calloc(wordLength, sizeof(char));
 	int i = 0;
 
+	// input loop
 	while (inLength < wordLength)
 	{
 		input = getch();
-		// TODO
-		// NEED TO ADD BACKSPACES
 		if (i > 0 && (input == 13 || input == 10))
 		{
-			// if enter, break to submit input
 			break;
 		}
 		else if (i > 0 && (input == 8 || input == 127))
@@ -189,10 +187,13 @@ char *turn(int wordLength)
 			// to lower
 			input += 32;
 		}
-		inputArr[i] = input;
-		inLength = strlen(inputArr);
-		addch(input);
-		i++;
+		else
+		{
+			inputArr[i] = input;
+			inLength = strlen(inputArr);
+			addch(input);
+			i++;
+		}
 	}
 
 	return inputArr;
