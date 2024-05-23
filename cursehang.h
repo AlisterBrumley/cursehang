@@ -1,9 +1,4 @@
-// #include <stdio.h>
-// #include <ncurses.h>
-// // #include <strings.h>
-// #include <stdbool.h>
-// #include <stdlib.h>
-// #include <ctype.h>
+
 
 void initialize();
 void draw_gallows();
