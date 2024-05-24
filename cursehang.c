@@ -7,54 +7,60 @@
 #include <time.h>
 #include "cursehang.h"
 
-// DO NOT WRITE PAST 23, 79
-// TO BE COMPILED WITH -lncurses
-
+// for positions of elements on screen
 struct pos
 {
 	int y;
 	int x;
 };
 
+// DO NOT WRITE PAST 23, 79
+// TO BE COMPILED WITH -lncurses
 int main(void)
 {
 	// VARIABLE SETTNG
 	int maxLength = 20;
 	int correct = 0;
 	bool win = false;
-	char alreadyGuessed[26] = {
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0};
+	struct pos wPos; // positon staring after WORD:
+	struct pos gPos; // positon staring after GUESS:
+	struct pos hPos; // positon of current hanged man
+	struct pos dPos; // DEBUG POS
+	dPos.y = 23;
+	dPos.x = 0;
+	char alreadyGuessed[26] = {// input guessed letters in order when used, skips looping through array
+							   0,
+							   0,
+							   0,
+							   0,
+							   0,
+							   0,
+							   0,
+							   0,
+							   0,
+							   0,
+							   0,
+							   0,
+							   0,
+							   0,
+							   0,
+							   0,
+							   0,
+							   0,
+							   0,
+							   0,
+							   0,
+							   0,
+							   0,
+							   0,
+							   0,
+							   0};
 
 	// DRAW BASIC SETUP
 	initialize();
 	draw_gallows();
 
-	// TODO FIND DICTIONARY, PULL RANDOM WORD FROM DICT AND SET
+	// SET WORD
 	char *word = word_picker();
 	word = "twice"; // 						// TEST: TO DELETE!!
 	int wLen = strlen(word);
@@ -62,34 +68,31 @@ int main(void)
 	// DISPLAY WORD LENGTH HINT
 	move(15, 20);
 	addstr("WORD:\t");
-	struct pos wPos;
 	getyx(stdscr, wPos.y, wPos.x);
 	for (int i = 0; i < wLen; i++)
 	{
 		addstr("_ ");
 	}
 
-	// SETTING POS FOR ANSWER
-	// int gPos.y, gPos.x;
+	// DISPLAY GUESS TEXT ENTRY
 	move(16, 20);
 	addstr("GUESS:\t");
-	struct pos gPos;
 	getyx(stdscr, gPos.y, gPos.x);
 
-	// game loop
+	// GAME LOOP
 	do
 	{
-		move(gPos.y, gPos.x); // setting pos
-		refresh();
-		char *guess = turn(maxLength); // turn input
+		move(gPos.y, gPos.x);		   // setting pos
+		char *guess = turn(maxLength); // user input
 		int gLen = strlen(guess);
-		int gIndex = guess[0] - 97; // for inputting to alreadyGuessed array
+		int gIndex = guess[0] - 97; // takes guesses in lower case letters, and aligns them to order in alphabet
 
 		clear_entry(gPos, maxLength);
 		// if guess is correct word
 		if (gLen == wLen && strcmp(word, guess) == 0)
 		{
-			win = true;
+			free(guess);
+			break;
 		}
 		// if guess was an incorrect word
 		else if (gLen > 1)
@@ -130,6 +133,7 @@ int main(void)
 	return 0;
 }
 
+// init ncurses
 void initialize(void)
 {
 	initscr();
@@ -137,6 +141,7 @@ void initialize(void)
 	noecho();
 }
 
+// draw gallows for game start
 void draw_gallows()
 {
 	// top bar
@@ -209,7 +214,6 @@ void response(struct pos gPos, char *message)
 	// NEED TO HALT INPUT FOR NAP!
 }
 
-// TO DO'ING
 // checks letters
 int letter_check(struct pos wPos, char *guess, char *word, int wordLen)
 {
