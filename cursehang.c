@@ -18,8 +18,11 @@ struct pos
 int main(void)
 {
 	// VARIABLE SETTNG
-	int maxLength = 20;
+	const int maxLength = 20;
+	const int maxWrong = 7;
+	const int alphaShift = 97;
 	int gCorrect = 0;
+	int gIncorrect = 0;
 	struct pos wPos; // positon staring after WORD:
 	struct pos gPos; // positon staring after GUESS:
 	struct pos hPos; // positon of current hanged man
@@ -27,32 +30,32 @@ int main(void)
 	dPos.y = 23;
 	dPos.x = 0;
 	char gAlready[26] = {// input guessed letters in order when used, skips looping through array
-							   0,
-							   0,
-							   0,
-							   0,
-							   0,
-							   0,
-							   0,
-							   0,
-							   0,
-							   0,
-							   0,
-							   0,
-							   0,
-							   0,
-							   0,
-							   0,
-							   0,
-							   0,
-							   0,
-							   0,
-							   0,
-							   0,
-							   0,
-							   0,
-							   0,
-							   0};
+						 0,
+						 0,
+						 0,
+						 0,
+						 0,
+						 0,
+						 0,
+						 0,
+						 0,
+						 0,
+						 0,
+						 0,
+						 0,
+						 0,
+						 0,
+						 0,
+						 0,
+						 0,
+						 0,
+						 0,
+						 0,
+						 0,
+						 0,
+						 0,
+						 0,
+						 0};
 
 	// DRAW BASIC SETUP
 	initialize();
@@ -60,7 +63,7 @@ int main(void)
 
 	// SET WORD
 	char *word = word_picker();
-	// word = "twice"; // 						// TEST: TO DELETE!!
+	word = "twice"; // 						// TEST: TO DELETE!!
 	int wLen = strlen(word);
 
 	// DISPLAY WORD LENGTH HINT
@@ -81,9 +84,10 @@ int main(void)
 	do
 	{
 		move(gPos.y, gPos.x);		   // setting pos
+		int oldCorrect = gCorrect;	   // for checks
 		char *guess = turn(maxLength); // user input
 		int gLen = strlen(guess);
-		int aIndex = guess[0] - 97; // takes guesses in lower case letters, and aligns them to order in alphabet
+		int aIndex = guess[0] - alphaShift; // takes guesses in lower case letters, and aligns them to order in alphabet
 
 		clear_entry(gPos, maxLength);
 		// if guess is gCorrect word
@@ -111,13 +115,35 @@ int main(void)
 			clear_entry(gPos, maxLength);
 		}
 
+		if (oldCorrect == gCorrect)
+		{
+			// DRAW HANGED MAN
+			gIncorrect++;
+		}
+
 		free(guess);
 		guess = NULL;
-	} while (gCorrect != wLen);
+	} while (gCorrect != wLen && gIncorrect < maxWrong);
 
-	clear();
-	mvaddstr(0, 0, "You Win!");
-	getch();
+	if (gCorrect == wLen)
+	{
+		clear();
+		mvaddstr(0, 0, "You Win!");
+		getch();
+	}
+	else if (gIncorrect == maxWrong)
+	{
+		clear();
+		mvaddstr(0, 0, "You Lose!");
+		getch();
+	}
+	else
+	{
+		clear();
+		mvaddstr(0, 0, "Uh Oh! You shouldn't be here!");
+		mvaddstr(1, 0, "The game broke, please report what happened as a bug!");
+		getch();
+	}
 
 	endwin();
 	return 0;
