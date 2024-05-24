@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <ncurses.h>
 #include <strings.h>
-#include <stdbool.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <time.h>
@@ -20,15 +19,14 @@ int main(void)
 {
 	// VARIABLE SETTNG
 	int maxLength = 20;
-	int correct = 0;
-	bool win = false;
+	int gCorrect = 0;
 	struct pos wPos; // positon staring after WORD:
 	struct pos gPos; // positon staring after GUESS:
 	struct pos hPos; // positon of current hanged man
 	struct pos dPos; // DEBUG POS
 	dPos.y = 23;
 	dPos.x = 0;
-	char alreadyGuessed[26] = {// input guessed letters in order when used, skips looping through array
+	char gAlready[26] = {// input guessed letters in order when used, skips looping through array
 							   0,
 							   0,
 							   0,
@@ -62,7 +60,7 @@ int main(void)
 
 	// SET WORD
 	char *word = word_picker();
-	word = "twice"; // 						// TEST: TO DELETE!!
+	// word = "twice"; // 						// TEST: TO DELETE!!
 	int wLen = strlen(word);
 
 	// DISPLAY WORD LENGTH HINT
@@ -85,14 +83,13 @@ int main(void)
 		move(gPos.y, gPos.x);		   // setting pos
 		char *guess = turn(maxLength); // user input
 		int gLen = strlen(guess);
-		int gIndex = guess[0] - 97; // takes guesses in lower case letters, and aligns them to order in alphabet
+		int aIndex = guess[0] - 97; // takes guesses in lower case letters, and aligns them to order in alphabet
 
 		clear_entry(gPos, maxLength);
-		// if guess is correct word
+		// if guess is gCorrect word
 		if (gLen == wLen && strcmp(word, guess) == 0)
 		{
-			free(guess);
-			break;
+			gCorrect = wLen;
 		}
 		// if guess was an incorrect word
 		else if (gLen > 1)
@@ -101,7 +98,7 @@ int main(void)
 			clear_entry(gPos, maxLength);
 		}
 		// if guess was already tried
-		else if (*guess == alreadyGuessed[gIndex])
+		else if (*guess == gAlready[aIndex])
 		{
 			response(gPos, "already tried!");
 			clear_entry(gPos, maxLength);
@@ -109,21 +106,14 @@ int main(void)
 		// if new single letter guess
 		else
 		{
-			alreadyGuessed[gIndex] = *guess;
-			correct += letter_check(wPos, guess, word, wLen);
+			gAlready[aIndex] = *guess;
+			gCorrect += letter_check(wPos, guess, word, wLen);
 			clear_entry(gPos, maxLength);
-
-			// TODO
-			// FUNCTION THIS
-			if (correct == wLen)
-			{
-				win = true;
-			}
 		}
 
 		free(guess);
 		guess = NULL;
-	} while (win == false);
+	} while (gCorrect != wLen);
 
 	clear();
 	mvaddstr(0, 0, "You Win!");
