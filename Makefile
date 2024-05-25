@@ -1,5 +1,5 @@
 # IDIR =../include
-CC=clang
+CC=cc
 CFLAGS= -lncurses
 
 SRCDIR		= src
