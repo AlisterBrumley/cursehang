@@ -1,7 +1,7 @@
 #include <ncurses.h>
 #include "backspace.h"
 
-void backspace()
+void backspace(void)
 {
     int y, x;
     getyx(stdscr, y, x);

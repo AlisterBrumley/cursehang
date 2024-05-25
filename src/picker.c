@@ -2,7 +2,7 @@
 #include <time.h>
 #include "picker.h"
 
-char *word_picker()
+char *word_picker(void)
 {
     char *dictionary[850] = {"a",
                              "able",

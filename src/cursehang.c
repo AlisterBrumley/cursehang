@@ -9,7 +9,6 @@
 #include "structs.h"
 #include "turn.h"
 
-
 // DO NOT WRITE PAST 23, 79
 // TO BE COMPILED WITH -lncurses
 int main(void)
@@ -17,12 +16,12 @@ int main(void)
 	// VARIABLE SETTNG
 	int gCorrect = 0;
 	int gIncorrect = 0;
-	pos wPos; // positon staring after WORD:
-	pos gPos; // positon staring after GUESS:
-	pos hPos; // positon of current hanged man
-	pos dPos; // DEBUG POS
-	dPos.y = 23;
-	dPos.x = 0;
+	pos wPos;			 // positon staring after WORD:
+	pos gPos;			 // positon staring after GUESS:
+	pos hPos;			 // positon of current hanged man
+	pos dPos;			 // DEBUG POS
+	dPos.y = 23;		 // last row on standard terminal
+	dPos.x = 0;			 // first column on standard terminal
 	char gAlready[26] = {// input guessed letters in order when used, skips looping through array
 						 0,
 						 0,
