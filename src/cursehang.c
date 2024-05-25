@@ -56,7 +56,7 @@ int main(void)
 
 	// SET WORD
 	char *word = word_picker();
-	word = "twice"; // 						// TEST: TO DELETE!!
+	//word = "twice"; // 						// TEST: TO DELETE!!
 	int wLen = strlen(word);
 
 	// DISPLAY WORD LENGTH HINT
