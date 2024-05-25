@@ -2,3 +2,4 @@ ch
 # comp
 .DS_Store
 *.code-workspace
+Darwin_*/

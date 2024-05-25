@@ -158,7 +158,7 @@ void initialize(void)
 }
 
 // draw gallows for game start
-void draw_gallows()
+void draw_gallows(void)
 {
 	// top bar
 	move(2, 25);
