@@ -1,3 +1,5 @@
 #! /bin/bash
 
+## REPLACED BY MAKEFILE
+
 clang cursehang.c -o ch -lncurses
