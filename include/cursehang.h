@@ -1,10 +1,8 @@
+#ifndef CURSEHANG_H
+#define CURSEHANG_H
 
+const int maxLength = 20;
+const int maxWrong = 7;
+const int alphaShift = 97;
 
-void initialize();
-void draw_gallows();
-char *turn();
-void response();
-int letter_check();
-void clear_entry();
-void backspace();
-char *word_picker();
+#endif
