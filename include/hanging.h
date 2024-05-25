@@ -1,2 +1,6 @@
+#ifndef HANGING_H
+#define HANGING_H
 
-void hanging();
+void hang();
+
+#endif

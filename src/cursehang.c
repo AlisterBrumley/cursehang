@@ -8,6 +8,7 @@
 #include "picker.h"
 #include "structs.h"
 #include "turn.h"
+#include "hanging.h"
 
 // DO NOT WRITE PAST 23, 79
 // TO BE COMPILED WITH -lncurses
@@ -18,7 +19,7 @@ int main(void)
 	int gIncorrect = 0;
 	pos wPos;			 // positon staring after WORD:
 	pos gPos;			 // positon staring after GUESS:
-	pos hPos;			 // positon of current hanged man
+	pos hPos;			 // positon of current hanged man // MOVED TO HANGING.C
 	pos dPos;			 // DEBUG POS
 	dPos.y = 23;		 // last row on standard terminal
 	dPos.x = 0;			 // first column on standard terminal
@@ -111,6 +112,7 @@ int main(void)
 		if (oldCorrect == gCorrect)
 		{
 			// DRAW HANGED MAN
+			hang(gIncorrect);
 			gIncorrect++;
 		}
 
