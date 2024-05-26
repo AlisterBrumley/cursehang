@@ -2,10 +2,10 @@
 
 ### Hangman, made with ncurses
 
-A simple game, that picks a word, and you can geuss what it is!<br>
+A simple game, that picks a word, and you can guess what it is!<br>
 You have 7 geusses before it completes the hangman.<br>
 <br>
-I used Charles Kay Ogden's BASIC English dictionary, which contains 850 words that should be known by most english speakers.
+The words are picked from the BASIC English dictionary, which contains 850 words that should be known by most english speakers.
 
 ## BUILDING
 
