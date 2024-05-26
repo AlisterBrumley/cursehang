@@ -8,7 +8,6 @@ void response(pos gPos, char *message)
     move(gPos.y, gPos.x);
     addstr(message);
     refresh();
-    napms(1000);
     // NEED TO HALT INPUT FOR NAP!
 }
 

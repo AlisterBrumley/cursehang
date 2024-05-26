@@ -19,6 +19,7 @@ int main(void)
 	int gIncorrect = 0;
 	pos wPos;			 // positon staring after WORD:
 	pos gPos;			 // positon staring after GUESS:
+	pos mPos;			 // positon under guess for messages
 	pos hPos;			 // positon of current hanged man // MOVED TO HANGING.C
 	pos dPos;			 // DEBUG POS
 	dPos.y = 23;		 // last row on standard terminal
@@ -57,7 +58,7 @@ int main(void)
 
 	// SET WORD
 	char *word = word_picker();
-	//word = "twice"; // 						// TEST: TO DELETE!!
+	// word = "twice"; // 						// TEST: TO DELETE!!
 	int wLen = strlen(word);
 
 	// DISPLAY WORD LENGTH HINT
@@ -73,12 +74,15 @@ int main(void)
 	move(16, 20);
 	addstr("GUESS:\t");
 	getyx(stdscr, gPos.y, gPos.x);
+	mPos.y = gPos.y + 1;
+	mPos.x = gPos.x;
 
 	// GAME LOOP
 	do
 	{
 		move(gPos.y, gPos.x);		   // setting pos
 		int oldCorrect = gCorrect;	   // for checks
+		curs_set(1);				   // unhide cursor
 		char *guess = turn(maxLength); // user input
 		int gLen = strlen(guess);
 		int aIndex = guess[0] - alphaShift; // takes guesses in lower case letters, and aligns them to order in alphabet
@@ -92,54 +96,66 @@ int main(void)
 		// if guess was an incorrect word
 		else if (gLen > 1)
 		{
-			response(gPos, "incorrect word!");
-			clear_entry(gPos, maxLength);
+			response(mPos, "incorrect word!");
 		}
-		// if guess was already tried
+		// if letter was already tried
 		else if (*guess == gAlready[aIndex])
 		{
-			response(gPos, "already tried!");
-			clear_entry(gPos, maxLength);
+			response(mPos, "already tried!");
 		}
-		// if new single letter guess
+		// if single letter guess
 		else
 		{
 			gAlready[aIndex] = *guess;
-			gCorrect += letter_check(wPos, guess, word, wLen);
-			clear_entry(gPos, maxLength);
+			int result = letter_check(wPos, guess, word, wLen);
+			if (result == 0)
+			{
+				response(mPos, "incorrect letter!");
+			}
+			else
+			{
+				gCorrect += result;
+			}
 		}
 
 		if (oldCorrect == gCorrect)
 		{
 			// DRAW HANGED MAN
+			curs_set(0); //hide cursor
 			hang(gIncorrect);
+			napms(1000);
 			gIncorrect++;
 		}
 
 		free(guess);
 		guess = NULL;
+		clear_entry(mPos, maxLength);
+		move(gPos.y, gPos.x);
 	} while (gCorrect != wLen && gIncorrect < maxWrong);
 
+	curs_set(0);
 	if (gCorrect == wLen)
 	{
 		clear();
 		mvaddstr(0, 0, "You Win!");
-		getch();
+		mvaddstr(1, 0, "Press any key to exit!");
 	}
 	else if (gIncorrect == maxWrong)
 	{
+		napms(1000); // extra delay as game ends after this
 		clear();
 		mvaddstr(0, 0, "You Lose!");
-		getch();
+		mvaddstr(1, 0, "Press any key to exit!");
 	}
 	else
 	{
 		clear();
 		mvaddstr(0, 0, "Uh Oh! You shouldn't be here!");
 		mvaddstr(1, 0, "The game broke, please report what happened as a bug!");
-		getch();
+		mvaddstr(2, 0, "Press any key to exit!");
 	}
 
+	getch();
 	endwin();
 	return 0;
 }
