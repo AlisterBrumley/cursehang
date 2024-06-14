@@ -145,14 +145,16 @@ int main(void)
 		napms(1000); // extra delay as game ends after this
 		clear();
 		mvaddstr(0, 0, "You Lose!");
-		mvaddstr(1, 0, "Press any key to exit!");
+		mvprintw(1, 0, "The correct answer was '%s'", word);
+		mvaddstr(2, 0, "Press any key to exit!");
 	}
 	else
 	{
 		clear();
 		mvaddstr(0, 0, "Uh Oh! You shouldn't be here!");
 		mvaddstr(1, 0, "The game broke, please report what happened as a bug!");
-		mvaddstr(2, 0, "Press any key to exit!");
+		mvprintw(2, 0, "The correct answer was '%s'", word);
+		mvaddstr(3, 0, "Press any key to exit!");
 	}
 
 	getch();
