@@ -9,7 +9,7 @@
 char *turn(int wordLength)
 {
 	// inputs char, if valid add to arr
-	char input;
+	int input;
 	int inLength = 0;
 	char *inputArr = calloc(wordLength, sizeof(char));
 	int i = 0;
@@ -22,7 +22,7 @@ char *turn(int wordLength)
 		{
 			break;
 		}
-		else if (i > 0 && (input == 8 || input == 127))
+		else if (i > 0 && (input == 8 || input == 127 || input == KEY_BACKSPACE))
 		{
 			backspace();
 			i--;
