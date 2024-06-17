@@ -1,29 +1,37 @@
-# IDIR =../include
+CC 				:= cc
+CFLAGS 			:= -lncurses
 
-CC=cc
-CFLAGS= -lncurses
+SRCDIR			:= src
+INCLDIR			:= include
+NCDIR			:= /mingw64/include/ncurses
 
-# IF WINDOWS ADD
-# -DNCURSES_STATIC
-# TO CFLAGS
-
-SRCDIR		= src
-INCLDIR		= include
-OUTFILE		= cursehang
-
-SOURCES		:= $(wildcard $(SRCDIR)/*.c)
-INCLUDES	:= $(wildcard $(INCLDIR)/*.h)
-
-# IF WINDOWS ADD
-# /mingw64/include/ncurses
-# OR LOCATION OF `ncurses.h`
-# TO INCLUDES
+SOURCES			:= $(wildcard $(SRCDIR)/*.c)
+INCLUDES		:= $(wildcard $(INCLDIR)/*.h)
 
 
-UNAME_S		:= $(shell uname -s)
-UNAME_M		:= $(shell uname -m)
+# CHECK PLATFORM, ADD WINDOWS VARS
+ifeq ($(OS),Windows_NT)
+	CFLAGS 		+= -DNCURSES_STATIC
+	INCLUDES	+= $(wildcard $(NCDIR)/*.h)
+	OS 			:= Win
+	ifeq ($(PROCESSOR_ARCHITEW6432),AMD64)
+        CCFLAGS += -D AMD64
+    else
+        ifeq ($(PROCESSOR_ARCHITECTURE),AMD64)
+            CCFLAGS += -D AMD64
+        endif
+        ifeq ($(PROCESSOR_ARCHITECTURE),x86)
+            CCFLAGS += -D IA32
+        endif
+    endif
+else
+	OS		:= $(shell uname -s)
+	ARCH	:= $(shell uname -m)
+endif
+
+OUTFILE		= $(OS)_$(ARCH)/cursehang
 
 $(OUTFILE): $(SOURCES) $(INCLUDES)
-		@mkdir -p $(UNAME_S)_$(UNAME_M)
-		@$(CC) -I $(INCLDIR) -o $(UNAME_S)_$(UNAME_M)/$(OUTFILE) $(SOURCES) $(CFLAGS)
-		@echo "made file in $(UNAME_S)_$(UNAME_M)/"
+		@mkdir -p $(OS)_$(ARCH)
+		@$(CC) -I $(INCLDIR) -o $(OUTFILE) $(SOURCES) $(CFLAGS)
+		@echo "made file in $(OS)_$(ARCH)/"
