@@ -3,3 +3,5 @@ ch
 .DS_Store
 *.code-workspace
 Darwin_*/
+Linux_*/
+Win_*/
