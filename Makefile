@@ -1,5 +1,6 @@
 CC 				:= cc
 CFLAGS 			:= -lncurses
+INFLAGS 		= -I$(INCLDIR)
 
 SRCDIR			:= src
 INCLDIR			:= include
@@ -13,25 +14,27 @@ INCLUDES		:= $(wildcard $(INCLDIR)/*.h)
 ifeq ($(OS),Windows_NT)
 	CFLAGS 		+= -DNCURSES_STATIC
 	INCLUDES	+= $(wildcard $(NCDIR)/*.h)
+	INFLAGS		+= -I$(NCDIR)
 	OS 			:= Win
 	ifeq ($(PROCESSOR_ARCHITEW6432),AMD64)
-        CCFLAGS += -D AMD64
+        ARCH	:= x86_64
     else
         ifeq ($(PROCESSOR_ARCHITECTURE),AMD64)
-            CCFLAGS += -D AMD64
+            ARCH	:= x86_64
         endif
         ifeq ($(PROCESSOR_ARCHITECTURE),x86)
-            CCFLAGS += -D IA32
+            ARCH	:= x86
         endif
     endif
 else
 	OS		:= $(shell uname -s)
-	ARCH	:= $(shell uname -m)
 endif
+
+# ARCH	:= $(shell uname -m)
 
 OUTFILE		= $(OS)_$(ARCH)/cursehang
 
 $(OUTFILE): $(SOURCES) $(INCLUDES)
 		@mkdir -p $(OS)_$(ARCH)
-		@$(CC) -I $(INCLDIR) -o $(OUTFILE) $(SOURCES) $(CFLAGS)
+		@$(CC) $(INFLAGS) -o $(OUTFILE) $(SOURCES) $(CFLAGS)
 		@echo "made file in $(OS)_$(ARCH)/"
