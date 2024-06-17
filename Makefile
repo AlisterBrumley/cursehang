@@ -1,5 +1,5 @@
 CC 				:= cc
-CFLAGS 			:= -lncurses
+LDFLAGS			:= -lncurses
 INFLAGS 		= -I$(INCLDIR)
 
 SRCDIR			:= src
@@ -40,7 +40,7 @@ OUTFILE		= $(OS)_$(ARCH)/cursehang
 $(OUTFILE): $(OBJECTS)
 		@echo "compiling $(OUTFILE)"
 		@mkdir -p $(OS)_$(ARCH)
-		@$(CC) $(INFLAGS) $(OBJECTS) -o $(OUTFILE) $(CFLAGS)
+		@$(CC) $(INFLAGS) $(OBJECTS) -o $(OUTFILE) $(LDFLAGS)
 		@echo "made file in $(OS)_$(ARCH)/"
 
 $(OBJDIR)/backspace.o: $(SRCDIR)/backspace.c $(INCLUDES)
@@ -80,3 +80,4 @@ $(OBJDIR)/turn.o: $(SRCDIR)/turn.c $(INCLUDES)
 
 clean:
 	rm -rf $(OBJDIR)
+	
