@@ -28,6 +28,7 @@ ifeq ($(OS),Windows_NT)
     endif
 else
 	OS		:= $(shell uname -s)
+	ARCH 	:= $(shell uname -m)
 endif
 
 # ARCH	:= $(shell uname -m)
