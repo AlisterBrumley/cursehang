@@ -1,41 +1,42 @@
-CC 				:= cc
-LDFLAGS			:= -lncurses
-INFLAGS 		= -I$(INCLDIR)
+CC					:= cc
+CFLAGS				:= -O2
+LDFLAGS				:= -lncurses
+INFLAGS 			= -I$(INCLDIR)
 
-SRCDIR			:= src
-INCLDIR			:= include
-OBJDIR			:= obj
-NCDIR			:= /mingw64/include/ncurses
+SRCDIR				:= src
+INCLDIR				:= include
+OBJDIR				:= obj
+NCDIR				:= /mingw64/include/ncurses
 
-SOURCES			:= $(wildcard $(SRCDIR)/*.c)
-INCLUDES		:= $(wildcard $(INCLDIR)/*.h)
-OBJECTS			:= $(OBJDIR)/backspace.o $(OBJDIR)/cursehang.o $(OBJDIR)/cursehelpers.o $(OBJDIR)/gamehelpers.o $(OBJDIR)/hanging.o $(OBJDIR)/picker.o $(OBJDIR)/turn.o
+SOURCES				:= $(wildcard $(SRCDIR)/*.c)
+INCLUDES			:= $(wildcard $(INCLDIR)/*.h)
+OBJECTS				:= $(OBJDIR)/backspace.o $(OBJDIR)/cursehang.o $(OBJDIR)/cursehelpers.o $(OBJDIR)/gamehelpers.o $(OBJDIR)/hanging.o $(OBJDIR)/picker.o $(OBJDIR)/turn.o
 
 
 # CHECK PLATFORM, ADD WINDOWS VARS
 ifeq ($(OS),Windows_NT)
-	CFLAGS 		+= -DNCURSES_STATIC
-	INCLUDES	+= $(wildcard $(NCDIR)/*.h)
-	INFLAGS		+= -I$(NCDIR)
-	OS 			:= Win
+	CFLAGS 			+= -DNCURSES_STATIC
+	INCLUDES		+= $(wildcard $(NCDIR)/*.h)
+	INFLAGS			+= -I$(NCDIR)
+	OS 				:= Win
 	ifeq ($(PROCESSOR_ARCHITEW6432),AMD64)
-        ARCH	:= x86_64
+        ARCH		:= x86_64
     else
         ifeq ($(PROCESSOR_ARCHITECTURE),AMD64)
-            ARCH	:= x86_64
+			ARCH	:= x86_64
         endif
         ifeq ($(PROCESSOR_ARCHITECTURE),x86)
-            ARCH	:= x86
+			ARCH	:= x86
         endif
     endif
 else
-	OS		:= $(shell uname -s)
-	ARCH 	:= $(shell uname -m)
+	OS				:= $(shell uname -s)
+	ARCH 			:= $(shell uname -m)
 endif
 
 # ARCH	:= $(shell uname -m)
 
-OUTFILE		= $(OS)_$(ARCH)/cursehang
+OUTFILE				:= $(OS)_$(ARCH)/cursehang
 
 $(OUTFILE): $(OBJECTS)
 		@echo "compiling $(OUTFILE)"
