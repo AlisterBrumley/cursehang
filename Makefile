@@ -1,13 +1,17 @@
+# COMPILER AND FLAGS
 CC					:= cc
 CFLAGS				:= -O2
 LDFLAGS				:= -lncurses
-INFLAGS 			= -I$(INCLDIR)
+INFLAGS				= -I$(INCLDIR)
 
+# FILE VARS
 SRCDIR				:= src
 INCLDIR				:= include
 OBJDIR				:= obj
 NCDIR				:= /mingw64/include/ncurses
+OUTDIR				= $(OS)_$(ARCH)
 
+# REQUIRMENTS
 SOURCES				:= $(wildcard $(SRCDIR)/*.c)
 INCLUDES			:= $(wildcard $(INCLDIR)/*.h)
 OBJECTS				:= $(OBJDIR)/backspace.o $(OBJDIR)/cursehang.o $(OBJDIR)/cursehelpers.o $(OBJDIR)/gamehelpers.o $(OBJDIR)/hanging.o $(OBJDIR)/picker.o $(OBJDIR)/turn.o
@@ -15,34 +19,33 @@ OBJECTS				:= $(OBJDIR)/backspace.o $(OBJDIR)/cursehang.o $(OBJDIR)/cursehelpers
 
 # CHECK PLATFORM, ADD WINDOWS VARS
 ifeq ($(OS),Windows_NT)
-	CFLAGS 			+= -DNCURSES_STATIC
+	CFLAGS			+= -DNCURSES_STATIC
+	LDFLAGS			+= -static
 	INCLUDES		+= $(wildcard $(NCDIR)/*.h)
 	INFLAGS			+= -I$(NCDIR)
 	OS 				:= Win
 	ifeq ($(PROCESSOR_ARCHITEW6432),AMD64)
-        ARCH		:= x86_64
-    else
-        ifeq ($(PROCESSOR_ARCHITECTURE),AMD64)
+		ARCH		:= x86_64
+	else
+		ifeq ($(PROCESSOR_ARCHITECTURE),AMD64)
 			ARCH	:= x86_64
-        endif
-        ifeq ($(PROCESSOR_ARCHITECTURE),x86)
+		endif
+		ifeq ($(PROCESSOR_ARCHITECTURE),x86)
 			ARCH	:= x86
-        endif
-    endif
+		endif
+	endif
 else
 	OS				:= $(shell uname -s)
-	ARCH 			:= $(shell uname -m)
+	ARCH			:= $(shell uname -m)
 endif
 
-# ARCH	:= $(shell uname -m)
-
-OUTFILE				:= $(OS)_$(ARCH)/cursehang
+OUTFILE				:= $(OUTDIR)/cursehang
 
 $(OUTFILE): $(OBJECTS)
-		@echo "compiling $(OUTFILE)"
+		@echo "linking $(OUTFILE)"
 		@mkdir -p $(OS)_$(ARCH)
 		@$(CC) $(INFLAGS) $(OBJECTS) -o $(OUTFILE) $(LDFLAGS)
-		@echo "made file in $(OS)_$(ARCH)/"
+		@echo "made $(OUTFILE)"
 
 $(OBJDIR)/backspace.o: $(SRCDIR)/backspace.c $(INCLUDES)
 		@echo "compiling backspace"
@@ -81,4 +84,6 @@ $(OBJDIR)/turn.o: $(SRCDIR)/turn.c $(INCLUDES)
 
 clean:
 	rm -rf $(OBJDIR)
-	
+
+fullclean: clean
+	rm -rf $(OUTDIR)
