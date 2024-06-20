@@ -1,3 +1,11 @@
+##	TESTED WITH MAC OS 10.13+ USING CLANG (as it responds to CC)
+##	TESTED WITH FEDORA 40 + DEBIAN 12 USING GCC
+##	TESTED WITH WINDOWS 10 USING MING64/GCC
+##		WINDOWS COMPILE/LINK TIME IS SLOW FOR ME
+##		GO GRAB A COFFEE!
+##
+##	UNTESTED WITH OTHER PLATFORMS!
+
 # COMPILER AND FLAGS
 CC					:= cc
 CFLAGS				:= -O2
@@ -10,6 +18,8 @@ INCLDIR				:= include
 OBJDIR				:= obj
 NCDIR				:= /mingw64/include/ncurses
 OUTDIR				= $(OS)_$(ARCH)
+OUTFILE				= $(OUTDIR)/cursehang
+ZIPFILE				= $(OUTFILE)_$(OUTDIR) # extension added later
 
 # REQUIRMENTS
 SOURCES				:= $(wildcard $(SRCDIR)/*.c)
@@ -34,19 +44,37 @@ ifeq ($(OS),Windows_NT)
 			ARCH	:= x86
 		endif
 	endif
-else
+else 
 	OS				:= $(shell uname -s)
 	ARCH			:= $(shell uname -m)
 endif
 
-OUTFILE				:= $(OUTDIR)/cursehang
+# SET ZIP FOR DIST TARGET
+ifeq ($(OS), Win)
+	ZIPFILE 		+=.zip
+	COMP 			:= 7z 
+	COMPFLAGS 		:= a $(ZIPFILE) $(OUTFILE)
+endif
+ifeq ($(OS), Darwin)
+	COMP 			:= hdiutil
+	COMPFLAGS 		= create -ov -srcfolder $(OUTDIR) -volname "cursehang" $(ZIPFILE)
+endif
+ifeq ($(OS), Linux)
+	ZIPFILE 		+=.tar.xz
+	COMP			:= tar
+	COMPFLAGS		:= -cJf $(ZIPFILE) -C $(OUTDIR)
+endif
+# IF YOU'RE USING ANOTHER OS, ADD IT HERE
 
+# MAIN TARGET, THAT LINKS SEPERATE OBJECTS
 $(OUTFILE): $(OBJECTS)
 		@echo "linking $(OUTFILE)"
 		@mkdir -p $(OS)_$(ARCH)
 		@$(CC) $(INFLAGS) $(OBJECTS) -o $(OUTFILE) $(LDFLAGS)
 		@echo "made $(OUTFILE)"
 
+# SEPERATE OBJECT TARGETS
+#	NOT USING STRAIGHT TO COMPILE, AS WINDOWS IS SLOW
 $(OBJDIR)/backspace.o: $(SRCDIR)/backspace.c $(INCLUDES)
 		@echo "compiling backspace"
 		@mkdir -p $(OBJDIR)
@@ -82,8 +110,14 @@ $(OBJDIR)/turn.o: $(SRCDIR)/turn.c $(INCLUDES)
 		@mkdir -p $(OBJDIR)
 		@$(CC) $(INFLAGS) -c $(SRCDIR)/turn.c -o $(OBJDIR)/turn.o $(CFLAGS)
 
+# HELPER TARGETS
+.PHONY: clean fullclean dist
+
 clean:
-	rm -rf $(OBJDIR)
+		rm -rf $(OBJDIR)
 
 fullclean: clean
-	rm -rf $(OUTDIR)
+		rm -rf $(OUTDIR)
+
+dist: $(OUTFILE)
+		$(COMP) $(COMPFLAGS)
