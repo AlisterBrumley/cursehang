@@ -44,25 +44,25 @@ ifeq ($(OS),Windows_NT)
 			ARCH	:= x86
 		endif
 	endif
-else 
+else
 	OS				:= $(shell uname -s)
 	ARCH			:= $(shell uname -m)
 endif
 
 # SET ZIP FOR DIST TARGET
 ifeq ($(OS), Win)
-	ZIPFILE 		+=.zip
-	COMP 			:= 7z 
-	COMPFLAGS 		:= a $(ZIPFILE) $(OUTFILE)
+	ZIPFILE 		:= $(addsuffix .zip, $(ZIPFILE))
+	COMP 			:= 7z
+	COMPFLAGS 		:= a $(ZIPFILE) $(OUTFILE).exe
 endif
-ifeq ($(OS), Darwin)
+ifeq ($(OS), Darwin) #HDIUTIL AUTOMATICALLY SETS EXTENSION
 	COMP 			:= hdiutil
-	COMPFLAGS 		= create -ov -srcfolder $(OUTDIR) -volname "cursehang" $(ZIPFILE)
+	COMPFLAGS 		:= create -ov -srcfolder $(OUTDIR) -volname "cursehang" $(ZIPFILE)
 endif
 ifeq ($(OS), Linux)
-	ZIPFILE 		+=.tar.xz
+	ZIPFILE 		:= $(addsuffix .tar.xz, $(ZIPFILE))
 	COMP			:= tar
-	COMPFLAGS		:= -cJf $(ZIPFILE) -C $(OUTDIR)
+	COMPFLAGS		:= -cJf $(ZIPFILE) -C $(OUTDIR) cursehang
 endif
 # IF YOU'RE USING ANOTHER OS, ADD IT HERE
 
